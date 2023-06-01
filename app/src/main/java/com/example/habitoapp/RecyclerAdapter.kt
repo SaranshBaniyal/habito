@@ -16,7 +16,7 @@ class RecyclerAdapter(private val context:Context, var data: List<HabitDataClass
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
-        holder.habitName.text = item.habitName
+        holder.habitName.text = item.habitname
         holder.streaks.text  = item.streak.toString()
     }
 
