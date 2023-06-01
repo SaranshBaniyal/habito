@@ -141,7 +141,20 @@ output = query({
 })
 
 
-
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete(request, pk):
+    try:
+        instance = Habit.objects.get(pk=pk)
+    except Habit.DoesNotExist:
+        return Response({'error': 'Object not found'}, status=404)
+    
+    if request.method == 'DELETE':
+        instance.delete()
+        
+        return Response({'success': 1})
+    
+    return Response({'error': 'Invalid request method'}, status=400)
 
 
 
