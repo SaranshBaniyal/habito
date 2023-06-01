@@ -44,7 +44,7 @@ class SignUpActivity : AppCompatActivity() {
                     .build()
 
                 val request = Request.Builder()
-                    .url("${HttpClient.baseurl}/api/accounts/signup/")
+                    .url("${HttpClient.baseurl}/api/signup/")
                     .post(requestBody)
                     .headers(headers)
                     .build()
@@ -54,7 +54,7 @@ class SignUpActivity : AppCompatActivity() {
                         val ans = response.body!!.string()
                         Log.d("TAG", "Signup Response:$ans")
                         HttpClient.username = username
-                        val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+                        val intent = Intent(this@SignUpActivity, MyHabitActivity::class.java)
                         startActivity(intent)
                         finish()
                     }

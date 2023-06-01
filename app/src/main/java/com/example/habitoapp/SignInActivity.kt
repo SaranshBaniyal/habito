@@ -46,7 +46,7 @@ class SignInActivity : AppCompatActivity() {
                     if (success) {
                         Log.d("TAG", "Login Success:$ans")
                         HttpClient.username = username
-                        val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                        val intent = Intent(this@SignInActivity, MyHabitActivity::class.java)
                         startActivity(intent)
                         finish()
                     } else {
