@@ -62,7 +62,13 @@ def create(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def listall(request):
+    username = request.data.get('username')
+    queryset = Habit.objects.filter(username=username).order_by('startdate')
+    data = list(queryset.values())
+    return Response(data)
 
 
 
