@@ -58,8 +58,10 @@ def create(request):
     serializer = HabitSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'success': 1, 'message':'Habit Added'})
+        # return Response(serializer.data, status=status.HTTP_201_CREATED)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'success': 0, 'message': 'Unable to add this Habit'})
 
 
 @api_view(['POST'])
@@ -105,17 +107,17 @@ def verify(request, pk):
                 instance.streak = instance.streak + 1
                 instance.nextdate = get_next_date(instance.nextdate)
                 instance.save()
-                return Response({'success': 1}) #streak updated
+                return Response({'success': 1, 'message':'Streak Updated'}) #streak updated
             
             else:
-                return Response({'success': 2}) #streak verification failed
+                return Response({'success': 2, 'message':'Streak Verification Failed'}) #streak verification failed
 
         else:
             instance.startdate = str(datetime.date.today())
             instance.nextdate = get_next_date(str(datetime.date.today()))
             instance.streak=1;
             instance.save()
-            return Response({'success': 0}) #streak reset
+            return Response({'success': 0, 'message':'Streak Reset'}) #streak reset
     
     return Response({'error': 'Invalid request method'}, status=400)
 
