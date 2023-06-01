@@ -10,8 +10,10 @@ from rest_framework.permissions import AllowAny
 from .models import Habit
 
 import json
-# import requests
+import requests
 import replicate
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -51,9 +53,7 @@ def create(request):
         "salesforce/blip:2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746",
         input={"image": imgurl}
     )
-    # print(output)
     request.data['stdtext'] = output
-
 
     serializer = HabitSerializer(data=request.data)
     if serializer.is_valid():
@@ -69,6 +69,76 @@ def listall(request):
     queryset = Habit.objects.filter(username=username).order_by('startdate')
     data = list(queryset.values())
     return Response(data)
+
+
+
+
+@api_view(['PATCH'])
+@permission_classes([AllowAny])
+def verify(request, pk):
+    # request.data._mutable=True #just added to fix AttributeError: This QueryDict instance is immutable
+    try:
+        instance = Habit.objects.get(pk=pk)
+    except Habit.DoesNotExist:
+        return Response({'error': 'Object not found'}, status=404)
+    
+    if request.method == 'PATCH':
+        if request.data.get('currentdate') == instance.nextdate:
+            imgurl = str(request.data.get('url'))
+            vtext = replicate.run("salesforce/blip:2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746",
+                                   input={"image": imgurl})
+            
+            API_TOKEN="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"    #huggingface api keys
+            API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+            headers = {"Authorization": f"Bearer {API_TOKEN}"}
+            payload = {
+	"inputs": {
+		"source_sentence": instance.stdtext,
+		"sentences": [
+			vtext, vtext]
+    }
+}
+            data = json.dumps(payload)
+            response = requests.request("POST", API_URL, headers=headers, data=data)
+            score = float(list(response.json())[1])
+            if score > 0.5:
+                instance.streak = instance.streak + 1
+                instance.nextdate = get_next_date(instance.nextdate)
+                instance.save()
+                return Response({'success': 1}) #streak updated
+            
+            else:
+                return Response({'success': 2}) #streak verification failed
+
+        else:
+            instance.startdate = str(datetime.date.today())
+            instance.nextdate = get_next_date(str(datetime.date.today()))
+            instance.streak=1;
+            instance.save()
+            return Response({'success': 0}) #streak reset
+    
+    return Response({'error': 'Invalid request method'}, status=400)
+
+
+
+
+
+
+API_TOKEN="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"    #huggingface api keys
+API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+headers = {"Authorization": f"Bearer {API_TOKEN}"}
+def query(payload):
+    data = json.dumps(payload)
+    response = requests.request("POST", API_URL, headers=headers, data=data)
+    return json.loads(response.content.decode("utf-8"))
+
+output = query({
+	"inputs": {
+		"source_sentence": "That is a happy person",
+		"sentences": [
+			"That is a happy dog"]
+    }
+})
 
 
 
@@ -105,3 +175,21 @@ def get_next_date(date_string):
     #.astimezone(pytz.timezone('Asia/Kolkata'))
 
     return next_date_string
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def test(request):
+    API_TOKEN="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"    #huggingface api keys
+    API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
+    headers = {"Authorization": f"Bearer {API_TOKEN}"}
+    payload = {
+	"inputs": {
+		"source_sentence": "ABCD",
+		"sentences": [
+			"vtext", "ABC"]
+    }
+}
+    data = json.dumps(payload)
+    response = requests.request("POST", API_URL, headers=headers, data=data)
+    return Response(list(response.json())[1])

@@ -6,6 +6,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('create/', views.create, name='create'),
     path('listall/', views.listall, name='listall'),
+    path('verify/<int:pk>/', views.verify, name='verify'),
 
-    # path('emosense/', views.emosense, name='emosense'),
+    path('test/', views.test, name='test'),
 ]
