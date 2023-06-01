@@ -44,7 +44,7 @@ class SignUpActivity : AppCompatActivity() {
                     .build()
 
                 val request = Request.Builder()
-                    .url("${HttpClient.baseurl}/api/accounts/signup/")
+                    .url("${HttpClient.baseurl}/api/signup/")
                     .post(requestBody)
                     .headers(headers)
                     .build()
