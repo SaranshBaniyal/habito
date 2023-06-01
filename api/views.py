@@ -120,27 +120,6 @@ def verify(request, pk):
     return Response({'error': 'Invalid request method'}, status=400)
 
 
-
-
-
-
-API_TOKEN="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"    #huggingface api keys
-API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-headers = {"Authorization": f"Bearer {API_TOKEN}"}
-def query(payload):
-    data = json.dumps(payload)
-    response = requests.request("POST", API_URL, headers=headers, data=data)
-    return json.loads(response.content.decode("utf-8"))
-
-output = query({
-	"inputs": {
-		"source_sentence": "That is a happy person",
-		"sentences": [
-			"That is a happy dog"]
-    }
-})
-
-
 @api_view(['DELETE'])
 @permission_classes([AllowAny])
 def delete(request, pk):
