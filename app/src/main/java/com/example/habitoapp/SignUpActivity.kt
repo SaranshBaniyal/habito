@@ -54,7 +54,7 @@ class SignUpActivity : AppCompatActivity() {
                         val ans = response.body!!.string()
                         Log.d("TAG", "Signup Response:$ans")
                         HttpClient.username = username
-                        val intent = Intent(this@SignUpActivity, MainActivity::class.java)
+                        val intent = Intent(this@SignUpActivity, MyHabitActivity::class.java)
                         startActivity(intent)
                         finish()
                     }
