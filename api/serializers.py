@@ -17,5 +17,5 @@ class UserSerializer(serializers.ModelSerializer):
 class HabitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Habit
-        fields = ('id', 'username', 'startdate', 'nextdate', 'streak', 'stdtext')
+        fields = ('id', 'username', 'startdate', 'nextdate', 'streak', 'stdtext', 'habitname')
         read_only_fields = ('id',)

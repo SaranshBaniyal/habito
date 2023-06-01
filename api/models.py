@@ -55,4 +55,5 @@ class Habit(models.Model):
     startdate = models.CharField(max_length=50)
     nextdate = models.CharField(max_length=50)
     streak = models.IntegerField(default=0)
-    stdtext = models.CharField(max_length=100)
+    stdtext = models.CharField(max_length=200)
+    habitname = models.CharField(max_length=50, default=None)
