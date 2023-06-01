@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/black"
+tools:context=".SignInActivity">
+
+<EditText
+    android:id="@+id/etUsername1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:ems="10"
+    android:inputType="textEmailAddress"
+    app:layout_constraintBottom_toTopOf="@+id/etPassword1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tvSignIn1"
+    app:layout_constraintVertical_bias="0.5"
+    android:hint="Username"
+    android:textColorHint="@color/white"
+    android:textColor="@color/white"/>
+
+<EditText
+    android:id="@+id/etPassword1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:ems="10"
+    android:inputType="textPassword"
+    app:layout_constraintBottom_toTopOf="@+id/btnSignIn1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/etUsername1"
+    app:layout_constraintVertical_bias="0.5"
+    android:hint="Password"
+    android:textColorHint="@color/white"
+    android:textColor="@color/white"/>
+
+<TextView
+    android:id="@+id/tvSignIn1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Sign In"
+    app:layout_constraintBottom_toTopOf="@+id/etUsername1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.5"
+    android:textSize="40sp"
+    android:textColor="@color/white"/>
+
+<TextView
+    android:id="@+id/tvSignUp1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Don't Have an Account? Sign Up"
+    android:textColor="@color/white"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/btnSignIn1"
+    app:layout_constraintVertical_bias="0.5" />
+
+<Button
+    android:id="@+id/btnSignIn1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Sign In"
+    app:layout_constraintBottom_toTopOf="@+id/tvSignUp1"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.5"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/etPassword1"
+    app:layout_constraintVertical_bias="0.5"
+    android:backgroundTint="@color/white"
+    android:textColor="@color/black"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
