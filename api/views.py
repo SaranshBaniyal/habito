@@ -43,19 +43,20 @@ def login(request):
 def create(request):
     # request.data._mutable=True #just added to fix AttributeError: This QueryDict instance is immutable
 
-    request.data['startdate'] = str(datetime.date.today())  # Returns 2018-01-15
-
-    request.data['nextdate'] = get_next_date(str(datetime.date.today()))
-    request.data['streak'] = 1
+    data_copy = request.data.copy()
+    data_copy['startdate'] = str(datetime.date.today())
+    data_copy['nextdate'] = get_next_date(str(datetime.date.today()))
+    data_copy['streak'] = 1
 
     imgurl = str(request.data.get('url'))
     output = replicate.run(
         "salesforce/blip:2e1dddc8621f72155f24cf2e0adbde548458d3cab9f00c0139eea840d0ac4746",
         input={"image": imgurl}
     )
-    request.data['stdtext'] = output
+    data_copy['stdtext'] = output
+    # request.data['stdtext'] = output
 
-    serializer = HabitSerializer(data=request.data)
+    serializer = HabitSerializer(data=data_copy)
     if serializer.is_valid():
         serializer.save()
         return Response({'success': 1, 'message':'Habit Added'})
