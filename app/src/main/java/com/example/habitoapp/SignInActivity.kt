@@ -9,6 +9,7 @@ import com.example.habitoapp.databinding.ActivitySignInBinding
 import com.google.android.material.snackbar.Snackbar
 import okio.IOException
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
 
 class SignInActivity : AppCompatActivity() {
@@ -23,22 +24,29 @@ class SignInActivity : AppCompatActivity() {
         }
 
         binding.btnSignIn1.setOnClickListener {
-
             val username = binding.etUsername1.text.toString()
             val password = binding.etPassword1.text.toString()
             val requestBody =
                 FormBody.Builder().add("username", username).add("password", password).build()
 
             val headers = Headers.Builder()
-//            .add("Authorization", "Bearer <your_token>")
-                .add("Content-Type", "application/json").add("ngrok-skip-browser-warning", "abc")
+                .add("Content-Type", "application/json")
+                .add("ngrok-skip-browser-warning", "abc")
                 .build()
 
-            val request =
-                Request.Builder().url("${HttpClient.baseurl}/api/login/").post(requestBody)
-                    .headers(headers).build()
+            val client = OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .build()
 
-            HttpClient.client.newCall(request).enqueue(object : Callback {
+            val request = Request.Builder()
+                .url("${HttpClient.baseurl}/api/login/")
+                .post(requestBody)
+                .headers(headers)
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
                     val ans = response.body!!.string()
                     val json = JSONObject(ans)
