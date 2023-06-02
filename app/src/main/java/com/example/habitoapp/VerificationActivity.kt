@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
 import okhttp3.Headers
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
 import org.json.JSONObject
@@ -36,6 +37,7 @@ import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 class VerificationActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
@@ -64,50 +66,54 @@ class VerificationActivity : AppCompatActivity() {
         binding.submitbutton.setOnClickListener {
             Log.d("TAG", "pressed")
 
-                val requestBody =
-                    FormBody.Builder().add("username", HttpClient.username)
-                        .add("currentdate", getCurrentDate())
-                        .add("url", imageUrl).build()
+            val requestBody =
+                FormBody.Builder().add("username", HttpClient.username)
+                    .add("currentdate", getCurrentDate())
+                    .add("url", imageUrl).build()
 
-                val headers = Headers.Builder()
-                    .add("Content-Type", "application/json")
-                    .add("ngrok-skip-browser-warning", "abc")
-                    .build()
+            val headers = Headers.Builder()
+                .add("Content-Type", "application/json")
+                .add("ngrok-skip-browser-warning", "abc")
+                .build()
 
             val request = Request.Builder()
-                .url("${HttpClient.baseurl}/api/verify/2/")
+                .url("${HttpClient.baseurl}/api/verify/")
                 .patch(requestBody) // Use .patch() instead of .post()
                 .headers(headers)
                 .build()
 
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val response = HttpClient.client.newCall(request).execute()
-                        val ans = response.body!!.string()
-                        val json = JSONObject(ans)
-                        val success = json.getInt("success")
-                        withContext(Dispatchers.Main) {
-                            if (success == 1) {
-                                Log.d("TAG", "Streak Updated")
-                                Toast.makeText(this@VerificationActivity, "Streak Updated", Toast.LENGTH_SHORT).show()
-                            } else if(success == 2) {
-                                Log.d("TAG", "Streak Verification Failed")
-                                Toast.makeText(this@VerificationActivity, "Streak Verification Failed", Toast.LENGTH_SHORT).show()
-                            }
-                            else{
-                                Log.d("TAG", "Streak Reset")
-                                Toast.makeText(this@VerificationActivity, "Streak Reset", Toast.LENGTH_SHORT).show()
-                            }
+            val client = OkHttpClient.Builder()
+                .connectTimeout(60, TimeUnit.SECONDS) // Set the timeout to 60 seconds
+                .build()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = client.newCall(request).execute()
+                    val ans = response.body!!.string()
+                    val json = JSONObject(ans)
+                    val success = json.getInt("success")
+                    withContext(Dispatchers.Main) {
+                        if (success == 1) {
+                            Log.d("TAG", "Streak Updated")
+                            Toast.makeText(this@VerificationActivity, "Streak Updated", Toast.LENGTH_SHORT).show()
+                        } else if(success == 2) {
+                            Log.d("TAG", "Streak Verification Failed")
+                            Toast.makeText(this@VerificationActivity, "Streak Verification Failed", Toast.LENGTH_SHORT).show()
                         }
-                    } catch (e: IOException) {
-                        Log.d("TAG", "Network Error:$e")
-                        Toast.makeText(this@VerificationActivity, "Network Error", Toast.LENGTH_SHORT).show()
+                        else{
+                            Log.d("TAG", "Streak Reset")
+                            Toast.makeText(this@VerificationActivity, "Streak Reset", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    val intent =
-                        Intent(this@VerificationActivity, MyHabitActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                } catch (e: IOException) {
+                    Log.d("TAG", "Network Error:$e")
+                    Toast.makeText(this@VerificationActivity, "Network Error", Toast.LENGTH_SHORT).show()
                 }
+                val intent =
+                    Intent(this@VerificationActivity, MyHabitActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
 
         captureButton.setOnClickListener {
@@ -123,6 +129,7 @@ class VerificationActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun dispatchTakePictureIntent() {
         val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
