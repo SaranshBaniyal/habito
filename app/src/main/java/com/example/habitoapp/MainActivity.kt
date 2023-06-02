@@ -28,12 +28,14 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
 import okhttp3.Headers
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okio.IOException
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     private lateinit var imageView: ImageView
@@ -58,6 +60,26 @@ class MainActivity : AppCompatActivity() {
         storage = Firebase.storage
         storageRef = storage.reference
 
+        val httpClient = OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
+            .build()
+
+        val request = Request.Builder()
+            .url("https://example.com")
+            .build()
+
+        httpClient.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                // Handle network failure
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                // Handle response
+            }
+        })
+
         binding.submitbutton.setOnClickListener {
             Log.d("TAG", "pressed")
             if (binding.etHabitName.text.isNotEmpty()) {
@@ -73,14 +95,14 @@ class MainActivity : AppCompatActivity() {
                     .add("ngrok-skip-browser-warning", "abc")
                     .build()
 
-                val request =
+                val request1 =
                     Request.Builder().url("${HttpClient.baseurl}/api/create/")
                         .post(requestBody)
                         .headers(headers).build()
 
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val response = HttpClient.client.newCall(request).execute()
+                        val response = httpClient.newCall(request1).execute()
                         val ans = response.body!!.string()
                         val json = JSONObject(ans)
                         val success = json.getInt("success")
