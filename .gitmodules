@@ -1,3 +1,6 @@
 [submodule "habito-android"]
 	path = habito-android
 	url = https://github.com/Miteshhsingla/habito-android.git
+[submodule "habito-backend"]
+	path = habito-backend
+	url = https://github.com/SaranshBaniyal/habito-backend.git
