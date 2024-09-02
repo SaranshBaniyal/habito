@@ -1,0 +1,3 @@
+[submodule "habito-android"]
+	path = habito-android
+	url = https://github.com/Miteshhsingla/habito-android.git
